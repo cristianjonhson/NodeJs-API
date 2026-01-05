@@ -159,6 +159,22 @@ npm run dev
 - `npm run dev` - Inicia con watch mode (recarga automática en cambios)
 - `npm test` - Ejecuta tests (aún no configurado)
 
+### Diferencias entre Comandos
+
+| Comando | Uso recomendado | Auto-reload | Node.js requerido |
+|---------|----------------|-------------|-------------------|
+| `node server.js` | Testing/CI, control directo | ❌ No | v14+ |
+| `npm start` | Producción, deployment | ❌ No | v14+ |
+| `npm run dev` | Desarrollo local | ✅ Sí | v18+ |
+
+**💡 Recomendación rápida:**
+- **Desarrollo:** `npm run dev` - Reinicio automático al guardar cambios
+- **Producción:** `npm start` - Estándar de la industria
+- **Testing:** `node server.js` - Mayor control del proceso
+
+📖 **[Ver documentación técnica completa →](TECHNICAL.md)** - Análisis detallado de performance, internals, señales del sistema y más.
+
+---
 El servidor estará disponible en:
 ```
 http://localhost:3000
