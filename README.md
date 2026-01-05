@@ -158,6 +158,8 @@ npm run dev
 - `npm start` - Inicia el servidor en modo producción
 - `npm run dev` - Inicia con watch mode (recarga automática en cambios)
 - `npm test` - Ejecuta tests (aún no configurado)
+- `npm run lint` - Verifica el código con StandardJS
+- `npm run lint:fix` - Corrige automáticamente problemas de estilo
 
 ### Diferencias entre Comandos
 
