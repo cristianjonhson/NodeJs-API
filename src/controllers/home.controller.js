@@ -19,7 +19,11 @@ const getHome = (req, res) => {
     endpoints: {
       '/': 'GET - Home',
       '/api/status': 'GET - Estado del servidor',
-      '/api/data': 'GET - Datos de ejemplo'
+      '/api/data': 'GET - Obtener todos los items',
+      '/api/data/:id': 'GET - Obtener item por ID',
+      '/api/data (POST)': 'POST - Crear nuevo item',
+      '/api/data/:id (PUT)': 'PUT - Actualizar item existente',
+      '/api/data/:id (DELETE)': 'DELETE - Eliminar item'
     },
     version: '1.0.0'
   }));

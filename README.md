@@ -168,7 +168,11 @@ Retorna información de bienvenida y lista de endpoints disponibles.
   "endpoints": {
     "/": "GET - Home",
     "/api/status": "GET - Estado del servidor",
-    "/api/data": "GET - Datos de ejemplo"
+    "/api/data": "GET - Obtener todos los items",
+    "/api/data/:id": "GET - Obtener item por ID",
+    "/api/data (POST)": "POST - Crear nuevo item",
+    "/api/data/:id (PUT)": "PUT - Actualizar item existente",
+    "/api/data/:id (DELETE)": "DELETE - Eliminar item"
   },
   "version": "1.0.0"
 }
@@ -189,10 +193,10 @@ Retorna el estado actual del servidor y métricas de salud.
 }
 ```
 
-### 3. Datos de Ejemplo
+### 3. Obtener Todos los Items
 **GET** `/api/data`
 
-Retorna un array de datos de ejemplo con información adicional.
+Retorna un array con todos los items disponibles.
 
 **Respuesta:**
 ```json
@@ -204,6 +208,145 @@ Retorna un array de datos de ejemplo con información adicional.
     { "id": 2, "name": "Item 2", "description": "Segundo elemento de ejemplo" },
     { "id": 3, "name": "Item 3", "description": "Tercer elemento de ejemplo" }
   ]
+}
+```
+
+### 4. Obtener Item por ID
+**GET** `/api/data/:id`
+
+Retorna un item específico según su ID.
+
+**Parámetros de URL:**
+- `id` (number) - ID del item a obtener
+
+**Respuesta exitosa (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "name": "Item 1",
+    "description": "Primer elemento de ejemplo"
+  }
+}
+```
+
+**Respuesta de error (404):**
+```json
+{
+  "success": false,
+  "error": "Item no encontrado",
+  "id": 99
+}
+```
+
+### 5. Crear Nuevo Item
+**POST** `/api/data`
+
+Crea un nuevo item en la colección.
+
+**Body (JSON):**
+```json
+{
+  "name": "Nuevo Item",
+  "description": "Descripción del nuevo item"
+}
+```
+
+**Campos:**
+- `name` (string, requerido) - Nombre del item
+- `description` (string, opcional) - Descripción del item
+
+**Respuesta exitosa (201):**
+```json
+{
+  "success": true,
+  "message": "Item creado exitosamente",
+  "data": {
+    "id": 4,
+    "name": "Nuevo Item",
+    "description": "Descripción del nuevo item"
+  }
+}
+```
+
+**Respuesta de error (400):**
+```json
+{
+  "success": false,
+  "error": "El campo 'name' es requerido"
+}
+```
+
+### 6. Actualizar Item
+**PUT** `/api/data/:id`
+
+Actualiza un item existente.
+
+**Parámetros de URL:**
+- `id` (number) - ID del item a actualizar
+
+**Body (JSON):**
+```json
+{
+  "name": "Nombre actualizado",
+  "description": "Nueva descripción"
+}
+```
+
+**Campos:**
+- `name` (string, opcional) - Nuevo nombre del item
+- `description` (string, opcional) - Nueva descripción del item
+
+**Respuesta exitosa (200):**
+```json
+{
+  "success": true,
+  "message": "Item actualizado exitosamente",
+  "data": {
+    "id": 1,
+    "name": "Nombre actualizado",
+    "description": "Nueva descripción"
+  }
+}
+```
+
+**Respuesta de error (404):**
+```json
+{
+  "success": false,
+  "error": "Item no encontrado",
+  "id": 99
+}
+```
+
+### 7. Eliminar Item
+**DELETE** `/api/data/:id`
+
+Elimina un item de la colección.
+
+**Parámetros de URL:**
+- `id` (number) - ID del item a eliminar
+
+**Respuesta exitosa (200):**
+```json
+{
+  "success": true,
+  "message": "Item eliminado exitosamente",
+  "data": {
+    "id": 1,
+    "name": "Item 1",
+    "description": "Primer elemento de ejemplo"
+  }
+}
+```
+
+**Respuesta de error (404):**
+```json
+{
+  "success": false,
+  "error": "Item no encontrado",
+  "id": 99
 }
 ```
 
@@ -232,8 +375,24 @@ curl http://localhost:3000/
 # Estado
 curl http://localhost:3000/api/status
 
-# Datos
+# Obtener todos los items
 curl http://localhost:3000/api/data
+
+# Obtener item por ID
+curl http://localhost:3000/api/data/1
+
+# Crear nuevo item
+curl -X POST http://localhost:3000/api/data \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Nuevo Item","description":"Descripción del nuevo item"}'
+
+# Actualizar item
+curl -X PUT http://localhost:3000/api/data/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Item Actualizado","description":"Nueva descripción"}'
+
+# Eliminar item
+curl -X DELETE http://localhost:3000/api/data/1
 ```
 
 ### Navegador
