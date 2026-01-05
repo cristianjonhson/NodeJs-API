@@ -1,24 +1,68 @@
 # NodeJs-API
 
-API REST simple construida con Node.js utilizando únicamente el módulo HTTP nativo, sin dependencias externas.
+API REST modular construida con Node.js utilizando únicamente el módulo HTTP nativo, sin dependencias externas. Implementa patrones de diseño y arquitectura limpia con separación de responsabilidades.
 
 ## 📋 Descripción
 
-Este proyecto es una API REST básica desarrollada con Node.js puro, demostrando cómo crear un servidor HTTP funcional sin frameworks como Express. Es ideal para entender los fundamentos de Node.js y cómo funcionan los servidores HTTP a bajo nivel.
+Este proyecto es una API REST desarrollada con Node.js puro, demostrando cómo crear un servidor HTTP funcional sin frameworks como Express, pero siguiendo principios de arquitectura limpia y patrones de diseño profesionales. 
+
+**Características principales:**
+- ✅ Separación de responsabilidades (SRP)
+- ✅ Arquitectura modular escalable
+- ✅ Middleware pattern para CORS
+- ✅ Controller pattern para lógica de negocio
+- ✅ Router pattern para enrutamiento
+- ✅ Configuración centralizada
+- ✅ Graceful shutdown
+- ✅ Manejo robusto de errores
+
+Es ideal para entender los fundamentos de Node.js, arquitectura de software y patrones de diseño a bajo nivel.
 
 ## 🚀 Tecnologías
 
 - **Node.js** - Entorno de ejecución de JavaScript
 - **HTTP Module** - Módulo nativo de Node.js para crear servidores HTTP
 
+## 🏗️ Arquitectura
+
+El proyecto sigue una arquitectura modular basada en separación de responsabilidades:
+
+```
+├── config/         → Configuración centralizada
+├── middleware/     → Funciones intermedias (CORS, etc.)
+├── controllers/    → Lógica de negocio por feature
+└── routes/         → Sistema de enrutamiento
+```
+
 ## 📁 Estructura del Proyecto
 
 ```
 NodeJs-API/
-├── server.js       # Servidor HTTP principal
-├── .gitignore      # Archivos y carpetas ignoradas por Git
-└── README.md       # Documentación del proyecto
+├── server.js                      # Punto de entrada y orquestador
+├── src/
+│   ├── config/
+│   │   └── server.config.js      # Configuración (PORT, HOST, CORS)
+│   ├── middleware/
+│   │   └── cors.middleware.js    # Middleware de CORS y OPTIONS
+│   ├── controllers/
+│   │   ├── home.controller.js    # Controlador del home
+│   │   ├── status.controller.js  # Controlador de status
+│   │   └── data.controller.js    # Controlador de datos
+│   └── routes/
+│       └── index.js               # Sistema de rutas centralizado
+├── .gitignore                     # Archivos ignorados por Git
+└── README.md                      # Documentación del proyecto
 ```
+
+### 📂 Responsabilidades por Módulo
+
+| Módulo | Responsabilidad |
+|--------|----------------|
+| **server.js** | Inicialización del servidor y coordinación de módulos |
+| **config/** | Gestión de configuración y variables de entorno |
+| **middleware/** | Funciones que procesan requests antes de llegar a controladores |
+| **controllers/** | Lógica de negocio específica de cada endpoint |
+| **routes/** | Enrutamiento HTTP y mapeo de URLs a controladores |
 
 ## ⚙️ Requisitos Previos
 
@@ -53,20 +97,32 @@ cd NodeJs-API
 
 ### Variables de Entorno
 
-Puedes configurar el puerto del servidor mediante una variable de entorno:
+Puedes configurar el servidor mediante variables de entorno:
+
+| Variable | Descripción | Valor por defecto |
+|----------|-------------|-------------------|
+| `PORT` | Puerto del servidor | 3000 |
+| `HOST` | Host donde escucha | localhost |
+| `ALLOWED_ORIGINS` | Orígenes permitidos CORS | * |
+| `NODE_ENV` | Entorno de ejecución | development |
+
+**Ejemplos:**
 
 ```bash
 # Linux/Mac
 export PORT=8080
+export HOST=0.0.0.0
+export NODE_ENV=production
+export ALLOWED_ORIGINS=https://miapp.com
 
 # Windows (CMD)
 set PORT=8080
+set HOST=0.0.0.0
 
 # Windows (PowerShell)
 $env:PORT=8080
+$env:HOST="0.0.0.0"
 ```
-
-Por defecto, el servidor usa el puerto **3000** si no se especifica.
 
 ## 🏃 Ejecución
 
@@ -88,7 +144,15 @@ Deberías ver en consola:
    - http://localhost:3000/
    - http://localhost:3000/api/status
    - http://localhost:3000/api/data
+🌍 Entorno: development
 ```
+
+### Detener el Servidor
+
+Presiona `Ctrl + C` en la terminal. El servidor ejecutará un **graceful shutdown**:
+- Cerrará conexiones activas ordenadamente
+- Liberará recursos apropiadamente
+- Mostrará mensaje de confirmación
 
 ## 📡 Endpoints Disponibles
 
@@ -105,36 +169,40 @@ Retorna información de bienvenida y lista de endpoints disponibles.
     "/": "GET - Home",
     "/api/status": "GET - Estado del servidor",
     "/api/data": "GET - Datos de ejemplo"
-  }
+  },
+  "version": "1.0.0"
 }
 ```
 
 ### 2. Estado del Servidor
 **GET** `/api/status`
 
-Retorna el estado actual del servidor.
+Retorna el estado actual del servidor y métricas de salud.
 
 **Respuesta:**
 ```json
 {
   "status": "OK",
-  "timestamp": "2026-01-04T10:30:00.000Z",
-  "uptime": 123.456
+  "timestamp": "2026-01-05T10:30:00.000Z",
+  "uptime": 123.456,
+  "environment": "development"
 }
 ```
 
 ### 3. Datos de Ejemplo
 **GET** `/api/data`
 
-Retorna un array de datos de ejemplo.
+Retorna un array de datos de ejemplo con información adicional.
 
 **Respuesta:**
 ```json
 {
+  "success": true,
+  "count": 3,
   "data": [
-    { "id": 1, "name": "Item 1" },
-    { "id": 2, "name": "Item 2" },
-    { "id": 3, "name": "Item 3" }
+    { "id": 1, "name": "Item 1", "description": "Primer elemento de ejemplo" },
+    { "id": 2, "name": "Item 2", "description": "Segundo elemento de ejemplo" },
+    { "id": 3, "name": "Item 3", "description": "Tercer elemento de ejemplo" }
   ]
 }
 ```
@@ -146,7 +214,9 @@ Para rutas no existentes, la API retorna:
 **Respuesta 404:**
 ```json
 {
-  "error": "Endpoint no encontrado"
+  "error": "Endpoint no encontrado",
+  "path": "/ruta/invalida",
+  "method": "GET"
 }
 ```
 
@@ -179,15 +249,77 @@ Simplemente abre en tu navegador:
 
 ## 🔒 CORS
 
-El servidor tiene configurado CORS para permitir peticiones desde cualquier origen:
+El servidor implementa CORS mediante un middleware dedicado que:
+
+- Configura headers apropiados para peticiones cross-origin
+- Maneja peticiones OPTIONS (preflight) correctamente
+- Permite configurar orígenes permitidos por entorno
 
 ```javascript
-Access-Control-Allow-Origin: *
+// Headers configurados
+Access-Control-Allow-Origin: * (configurable)
 Access-Control-Allow-Methods: GET, POST, PUT, DELETE
 Access-Control-Allow-Headers: Content-Type
 ```
 
+**Nota de seguridad:** En producción, configura `ALLOWED_ORIGINS` con dominios específicos en lugar de `*`.
+
+## 🏗️ Patrones de Diseño Implementados
+
+### 1. **Separation of Concerns (SoC)**
+Cada módulo tiene una única responsabilidad claramente definida.
+
+### 2. **Middleware Pattern**
+El CORS se implementa como middleware reutilizable que procesa requests.
+
+### 3. **Controller Pattern**
+La lógica de negocio está encapsulada en controladores específicos.
+
+### 4. **Router Pattern**
+Sistema de enrutamiento centralizado que mapea URLs a controladores.
+
+### 5. **Configuration Management**
+Configuración centralizada en módulo dedicado.
+
 ## 🛠️ Desarrollo
+
+### Agregar Nuevo Endpoint
+
+1. **Crear controlador** en `src/controllers/`:
+```javascript
+// src/controllers/nuevo.controller.js
+const getNuevo = (req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ mensaje: 'Nuevo endpoint' }));
+};
+
+module.exports = { getNuevo };
+```
+
+2. **Registrar ruta** en `src/routes/index.js`:
+```javascript
+const nuevoController = require('../controllers/nuevo.controller');
+
+// En la función handleRoute
+if (req.method === 'GET' && req.url === '/api/nuevo') {
+  nuevoController.getNuevo(req, res);
+  return true;
+}
+```
+
+### Agregar Middleware
+
+Crea un archivo en `src/middleware/` e impórtalo en [server.js](server.js):
+
+```javascript
+// src/middleware/logger.middleware.js
+const logRequest = (req) => {
+  console.log(`${req.method} ${req.url}`);
+};
+
+module.exports = { logRequest };
+```
 
 ### Detener el Servidor
 
@@ -195,19 +327,41 @@ Presiona `Ctrl + C` en la terminal donde está corriendo el servidor.
 
 ### Modificaciones
 
-El código está completamente comentado para facilitar su comprensión y modificación. Puedes:
+El código está completamente comentado y organizado modularmente. Ventajas de esta arquitectura:
 
-- Agregar nuevos endpoints modificando el sistema de enrutamiento
-- Cambiar las respuestas JSON según tus necesidades
-- Implementar métodos HTTP adicionales (POST, PUT, DELETE)
-- Agregar manejo de errores más robusto
+- ✅ **Fácil de mantener**: Cada cambio se hace en un solo lugar
+- ✅ **Escalable**: Agregar features no afecta código existente
+- ✅ **Testeable**: Cada módulo puede probarse independientemente
+- ✅ **Reutilizable**: Middleware y controladores son módulos independientes
+- ✅ **Profesional**: Sigue mejores prácticas de arquitectura de software
+
+**Posibles mejoras futuras:**
+- Implementar logging estructurado (Winston, Pino)
+- Agregar validación de datos (Joi, Yup, Zod)
+- Implementar rate limiting
+- Agregar tests automatizados (Jest, Mocha)
+- Implementar manejo de body para POST/PUT
+- Agregar health checks más robustos
 
 ## 📝 Notas
 
 - Este proyecto utiliza el prefijo `node:` en las importaciones (`require('node:http')`) para indicar explícitamente módulos nativos de Node.js
 - No se requiere instalación de dependencias (`npm install`) ya que solo usa módulos nativos
-- Ideal para aprendizaje y proyectos pequeños
-- Para proyectos en producción, considera usar frameworks como Express.js
+- Implementa patrones de diseño profesionales sin frameworks
+- Ideal para aprendizaje de arquitectura de software y Node.js a bajo nivel
+- Para proyectos en producción a gran escala, considera usar frameworks como Express.js, Fastify o NestJS
+
+## 🎓 Conceptos Aprendidos
+
+Este proyecto demuestra:
+- Arquitectura modular y separación de responsabilidades
+- Patrones de diseño (Middleware, Controller, Router)
+- Manejo de requests/responses HTTP a bajo nivel
+- Configuración mediante variables de entorno
+- Graceful shutdown y manejo de señales del sistema
+- CORS y preflight requests
+- Enrutamiento HTTP sin frameworks
+- Organización de código escalable
 
 ## 🤝 Contribuciones
 
