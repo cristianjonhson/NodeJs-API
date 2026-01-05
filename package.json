@@ -1,0 +1,36 @@
+{
+  "name": "nodejs-api",
+  "version": "1.0.0",
+  "description": "API REST modular construida con Node.js utilizando únicamente el módulo HTTP nativo, sin dependencias externas. Implementa patrones de diseño y arquitectura limpia con separación de responsabilidades.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "echo \"No hay tests configurados aún\" && exit 0"
+  },
+  "keywords": [
+    "nodejs",
+    "api",
+    "rest",
+    "http",
+    "modular",
+    "architecture",
+    "patterns",
+    "clean-code",
+    "separation-of-concerns",
+    "crud"
+  ],
+  "author": "cristianjonhson",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cristianjonhson/NodeJs-API.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cristianjonhson/NodeJs-API/issues"
+  },
+  "homepage": "https://github.com/cristianjonhson/NodeJs-API#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -52,6 +52,7 @@ NodeJs-API/
 │   │   └── index.js                     # Sistema de rutas centralizado
 │   └── utils/
 │       └── bodyParser.js                # Utilidad para parsear JSON body
+├── package.json                          # Configuración de npm y scripts
 ├── NodeJs-API.postman_collection.json   # Colección de Postman
 ├── .gitignore                            # Archivos ignorados por Git
 └── README.md                             # Documentación del proyecto
@@ -96,6 +97,14 @@ git clone https://github.com/cristianjonhson/NodeJs-API.git
 cd NodeJs-API
 ```
 
+3. (Opcional) Aunque el proyecto no requiere dependencias externas, puedes inicializar npm:
+
+```bash
+npm install
+```
+
+**Nota:** Este proyecto usa solo módulos nativos de Node.js, por lo que `npm install` no instalará dependencias externas.
+
 ## 🎯 Configuración
 
 ### Variables de Entorno
@@ -129,11 +138,26 @@ $env:HOST="0.0.0.0"
 
 ## 🏃 Ejecución
 
-Para iniciar el servidor:
+### Usando Node.js directamente:
 
 ```bash
 node server.js
 ```
+
+### Usando npm scripts:
+
+```bash
+# Iniciar el servidor en modo producción
+npm start
+
+# Iniciar en modo desarrollo con auto-reload (Node.js 18+)
+npm run dev
+```
+
+**Scripts disponibles:**
+- `npm start` - Inicia el servidor en modo producción
+- `npm run dev` - Inicia con watch mode (recarga automática en cambios)
+- `npm test` - Ejecuta tests (aún no configurado)
 
 El servidor estará disponible en:
 ```
