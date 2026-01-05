@@ -3,7 +3,7 @@
  * Responsable de la lógica de negocio del endpoint raíz
  */
 
-const config = require('../config/server.config');
+const config = require('../config/server.config')
 
 /**
  * Maneja la petición GET a la raíz
@@ -12,10 +12,14 @@ const config = require('../config/server.config');
  * @param {Object} res - Objeto de respuesta HTTP
  */
 const getHome = (req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
+  res.statusCode = 200
+  res.setHeader('Content-Type', 'application/json')
   res.end(JSON.stringify({
     message: 'Bienvenido a la API de Node.js',
+    server: {
+      host: config.HOST,
+      port: config.PORT
+    },
     endpoints: {
       '/': 'GET - Home',
       '/api/status': 'GET - Estado del servidor',
@@ -26,7 +30,7 @@ const getHome = (req, res) => {
       '/api/data/:id (DELETE)': 'DELETE - Eliminar item'
     },
     version: '1.0.0'
-  }));
-};
+  }))
+}
 
-module.exports = { getHome };
+module.exports = { getHome }

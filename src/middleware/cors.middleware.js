@@ -3,17 +3,17 @@
  * Configura los headers necesarios para permitir peticiones desde otros orígenes
  */
 
-const config = require('../config/server.config');
+const config = require('../config/server.config')
 
 /**
  * Aplica headers CORS a la respuesta
  * @param {Object} res - Objeto de respuesta HTTP
  */
 const applyCors = (res) => {
-  res.setHeader('Access-Control-Allow-Origin', config.CORS.allowedOrigins);
-  res.setHeader('Access-Control-Allow-Methods', config.CORS.allowedMethods);
-  res.setHeader('Access-Control-Allow-Headers', config.CORS.allowedHeaders);
-};
+  res.setHeader('Access-Control-Allow-Origin', config.CORS.allowedOrigins)
+  res.setHeader('Access-Control-Allow-Methods', config.CORS.allowedMethods)
+  res.setHeader('Access-Control-Allow-Headers', config.CORS.allowedHeaders)
+}
 
 /**
  * Maneja peticiones OPTIONS (preflight)
@@ -23,11 +23,11 @@ const applyCors = (res) => {
  */
 const handleOptions = (req, res) => {
   if (req.method === 'OPTIONS') {
-    res.statusCode = 204; // No Content
-    res.end();
-    return true;
+    res.statusCode = 204 // No Content
+    res.end()
+    return true
   }
-  return false;
-};
+  return false
+}
 
-module.exports = { applyCors, handleOptions };
+module.exports = { applyCors, handleOptions }
