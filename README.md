@@ -38,20 +38,23 @@ El proyecto sigue una arquitectura modular basada en separación de responsabili
 
 ```
 NodeJs-API/
-├── server.js                      # Punto de entrada y orquestador
+├── server.js                             # Punto de entrada y orquestador
 ├── src/
 │   ├── config/
-│   │   └── server.config.js      # Configuración (PORT, HOST, CORS)
+│   │   └── server.config.js             # Configuración (PORT, HOST, CORS)
 │   ├── middleware/
-│   │   └── cors.middleware.js    # Middleware de CORS y OPTIONS
+│   │   └── cors.middleware.js           # Middleware de CORS y OPTIONS
 │   ├── controllers/
-│   │   ├── home.controller.js    # Controlador del home
-│   │   ├── status.controller.js  # Controlador de status
-│   │   └── data.controller.js    # Controlador de datos
-│   └── routes/
-│       └── index.js               # Sistema de rutas centralizado
-├── .gitignore                     # Archivos ignorados por Git
-└── README.md                      # Documentación del proyecto
+│   │   ├── home.controller.js           # Controlador del home
+│   │   ├── status.controller.js         # Controlador de status
+│   │   └── data.controller.js           # Controlador de datos
+│   ├── routes/
+│   │   └── index.js                     # Sistema de rutas centralizado
+│   └── utils/
+│       └── bodyParser.js                # Utilidad para parsear JSON body
+├── NodeJs-API.postman_collection.json   # Colección de Postman
+├── .gitignore                            # Archivos ignorados por Git
+└── README.md                             # Documentación del proyecto
 ```
 
 ### 📂 Responsabilidades por Módulo
@@ -401,10 +404,24 @@ Simplemente abre en tu navegador:
 - http://localhost:3000/api/status
 - http://localhost:3000/api/data
 
-### Herramientas
-- [Postman](https://www.postman.com/)
-- [Insomnia](https://insomnia.rest/)
-- [Thunder Client](https://www.thunderclient.com/) (extensión de VS Code)
+### Postman Collection
+
+El proyecto incluye una colección de Postman lista para importar con todas las peticiones configuradas:
+
+**📦 Archivo:** `NodeJs-API.postman_collection.json`
+
+**Cómo usar:**
+1. Abre Postman
+2. Click en **Import** (esquina superior izquierda)
+3. Arrastra el archivo `NodeJs-API.postman_collection.json` o selecciónalo
+4. La colección aparecerá con 7 requests configurados
+5. ¡Ejecuta cualquier request!
+
+### Otras Herramientas
+- [Postman](https://www.postman.com/) - Desktop app
+- [Insomnia](https://insomnia.rest/) - Cliente REST alternativo
+- [Thunder Client](https://www.thunderclient.com/) - Extensión de VS Code
+- **Consola de Firefox** - Usa `fetch()` en la consola del navegador (F12)
 
 ## 🔒 CORS
 

@@ -1,0 +1,187 @@
+{
+	"info": {
+		"_postman_id": "nodejs-api-collection",
+		"name": "NodeJs-API",
+		"description": "Colección de Postman para probar la API REST de Node.js con operaciones CRUD completas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "nodejs-api"
+	},
+	"item": [
+		{
+			"name": "Home",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						""
+					]
+				},
+				"description": "Obtiene información de bienvenida y lista de endpoints disponibles"
+			},
+			"response": []
+		},
+		{
+			"name": "Estado del Servidor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"status"
+					]
+				},
+				"description": "Obtiene el estado actual del servidor, timestamp, uptime y entorno"
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Todos los Items",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/data",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"data"
+					]
+				},
+				"description": "Obtiene todos los items de la colección"
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Item por ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/data/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"data",
+						"1"
+					]
+				},
+				"description": "Obtiene un item específico por su ID"
+			},
+			"response": []
+		},
+		{
+			"name": "Crear Nuevo Item",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Item desde Postman\",\n  \"description\": \"Este item fue creado usando Postman\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/data",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"data"
+					]
+				},
+				"description": "Crea un nuevo item. El campo 'name' es requerido, 'description' es opcional"
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar Item",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Item Actualizado\",\n  \"description\": \"Este item fue actualizado desde Postman\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/data/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"data",
+						"1"
+					]
+				},
+				"description": "Actualiza un item existente. Ambos campos son opcionales"
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Item",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/data/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"data",
+						"1"
+					]
+				},
+				"description": "Elimina un item de la colección por su ID"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
