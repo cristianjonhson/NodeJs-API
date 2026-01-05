@@ -13,7 +13,7 @@ const config = require('../config/server.config')
  */
 const getHome = (req, res) => {
   res.statusCode = 200
-  res.setHeader('Content-Type', 'application/json')
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
   res.end(JSON.stringify({
     message: 'Bienvenido a la API de Node.js',
     server: {

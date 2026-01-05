@@ -88,7 +88,7 @@ const handleRoute = (req, res) => {
  */
 const handleNotFound = (req, res) => {
   res.statusCode = 404
-  res.setHeader('Content-Type', 'application/json')
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
   res.end(JSON.stringify({
     error: 'Endpoint no encontrado',
     path: req.url,

@@ -11,7 +11,7 @@
  */
 const getStatus = (req, res) => {
   res.statusCode = 200
-  res.setHeader('Content-Type', 'application/json')
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
   res.end(JSON.stringify({
     status: 'OK',
     timestamp: new Date().toISOString(),

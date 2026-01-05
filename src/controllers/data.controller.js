@@ -26,7 +26,7 @@ let nextId = 4
  */
 const getData = (req, res) => {
   res.statusCode = 200
-  res.setHeader('Content-Type', 'application/json')
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
   res.end(JSON.stringify({
     success: true,
     count: mockData.length,
@@ -46,7 +46,7 @@ const getDataById = (req, res, id) => {
 
   if (!item) {
     res.statusCode = 404
-    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.end(JSON.stringify({
       success: false,
       error: 'Item no encontrado',
@@ -56,7 +56,7 @@ const getDataById = (req, res, id) => {
   }
 
   res.statusCode = 200
-  res.setHeader('Content-Type', 'application/json')
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
   res.end(JSON.stringify({
     success: true,
     data: item
@@ -75,7 +75,7 @@ const createData = async (req, res) => {
 
     if (!body.name) {
       res.statusCode = 400
-      res.setHeader('Content-Type', 'application/json')
+      res.setHeader('Content-Type', 'application/json; charset=utf-8')
       res.end(JSON.stringify({
         success: false,
         error: 'El campo "name" es requerido'
@@ -92,7 +92,7 @@ const createData = async (req, res) => {
     mockData.push(newItem)
 
     res.statusCode = 201
-    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.end(JSON.stringify({
       success: true,
       message: 'Item creado exitosamente',
@@ -100,7 +100,7 @@ const createData = async (req, res) => {
     }))
   } catch (error) {
     res.statusCode = 400
-    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.end(JSON.stringify({
       success: false,
       error: 'Error al parsear el body: ' + error.message
@@ -122,7 +122,7 @@ const updateData = async (req, res, id) => {
 
     if (index === -1) {
       res.statusCode = 404
-      res.setHeader('Content-Type', 'application/json')
+      res.setHeader('Content-Type', 'application/json; charset=utf-8')
       res.end(JSON.stringify({
         success: false,
         error: 'Item no encontrado',
@@ -139,7 +139,7 @@ const updateData = async (req, res, id) => {
     }
 
     res.statusCode = 200
-    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.end(JSON.stringify({
       success: true,
       message: 'Item actualizado exitosamente',
@@ -147,7 +147,7 @@ const updateData = async (req, res, id) => {
     }))
   } catch (error) {
     res.statusCode = 400
-    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.end(JSON.stringify({
       success: false,
       error: 'Error al parsear el body: ' + error.message
@@ -167,7 +167,7 @@ const deleteData = (req, res, id) => {
 
   if (index === -1) {
     res.statusCode = 404
-    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.end(JSON.stringify({
       success: false,
       error: 'Item no encontrado',
@@ -179,7 +179,7 @@ const deleteData = (req, res, id) => {
   const deletedItem = mockData.splice(index, 1)[0]
 
   res.statusCode = 200
-  res.setHeader('Content-Type', 'application/json')
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
   res.end(JSON.stringify({
     success: true,
     message: 'Item eliminado exitosamente',
