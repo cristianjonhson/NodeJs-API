@@ -1,0 +1,21 @@
+{
+  "watch": [
+    "server.js",
+    "src/**/*.js"
+  ],
+  "ext": "js,json",
+  "ignore": [
+    "node_modules/**",
+    ".git",
+    "*.test.js",
+    "*.spec.js"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": 500,
+  "verbose": true,
+  "execMap": {
+    "js": "node"
+  }
+}

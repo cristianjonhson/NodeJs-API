@@ -97,13 +97,13 @@ git clone https://github.com/cristianjonhson/NodeJs-API.git
 cd NodeJs-API
 ```
 
-3. (Opcional) Aunque el proyecto no requiere dependencias externas, puedes inicializar npm:
+3. Instala las dependencias de desarrollo (Nodemon, StandardJS):
 
 ```bash
 npm install
 ```
 
-**Nota:** Este proyecto usa solo módulos nativos de Node.js, por lo que `npm install` no instalará dependencias externas.
+**Nota:** Este proyecto usa solo módulos nativos de Node.js en producción. Las dependencias instaladas (`nodemon` y `standard`) son solo para desarrollo.
 
 ## 🎯 Configuración
 
@@ -150,29 +150,45 @@ node server.js
 # Iniciar el servidor en modo producción
 npm start
 
-# Iniciar en modo desarrollo con auto-reload (Node.js 18+)
+# Iniciar en modo desarrollo con Nodemon (auto-reload)
 npm run dev
 ```
 
 **Scripts disponibles:**
 - `npm start` - Inicia el servidor en modo producción
-- `npm run dev` - Inicia con watch mode (recarga automática en cambios)
+- `npm run dev` - Inicia con Nodemon (recarga automática en cambios)
 - `npm test` - Ejecuta tests (aún no configurado)
 - `npm run lint` - Verifica el código con StandardJS
 - `npm run lint:fix` - Corrige automáticamente problemas de estilo
 
 ### Diferencias entre Comandos
 
-| Comando | Uso recomendado | Auto-reload | Node.js requerido |
-|---------|----------------|-------------|-------------------|
-| `node server.js` | Testing/CI, control directo | ❌ No | v14+ |
-| `npm start` | Producción, deployment | ❌ No | v14+ |
-| `npm run dev` | Desarrollo local | ✅ Sí | v18+ |
+| Comando | Uso recomendado | Auto-reload | Herramienta | Node.js requerido |
+|---------|----------------|-------------|-------------|-------------------|
+| `node server.js` | Testing/CI, control directo | ❌ No | Node nativo | v14+ |
+| `npm start` | Producción, deployment | ❌ No | Node nativo | v14+ |
+| `npm run dev` | Desarrollo local | ✅ Sí | Nodemon | v14+ |
 
 **💡 Recomendación rápida:**
-- **Desarrollo:** `npm run dev` - Reinicio automático al guardar cambios
+- **Desarrollo:** `npm run dev` - Nodemon reinicia el servidor automáticamente al guardar cambios
 - **Producción:** `npm start` - Estándar de la industria
 - **Testing:** `node server.js` - Mayor control del proceso
+
+### Configuración de Nodemon
+
+El archivo `nodemon.json` configura el comportamiento en desarrollo:
+
+```json
+{
+  "watch": ["server.js", "src/**/*.js"],
+  "ext": "js,json",
+  "ignore": ["node_modules/**", ".git"],
+  "delay": 500,
+  "env": {
+    "NODE_ENV": "development"
+  }
+}
+```
 
 📖 **[Ver documentación técnica completa →](TECHNICAL.md)** - Análisis detallado de performance, internals, señales del sistema y más.
 

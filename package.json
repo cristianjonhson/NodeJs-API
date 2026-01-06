@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
+    "dev": "nodemon server.js",
     "test": "echo \"No hay tests configurados aún\" && exit 0",
     "lint": "standard",
     "lint:fix": "standard --fix"
@@ -36,6 +36,7 @@
     "node": ">=14.0.0"
   },
   "devDependencies": {
+    "nodemon": "3.1.9",
     "standard": "17.1.0"
   },
   "eslintConfig": {
