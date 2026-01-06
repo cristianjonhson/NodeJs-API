@@ -426,9 +426,32 @@ Para rutas no existentes, la API retorna:
 
 ## 🧪 Pruebas
 
-Puedes probar los endpoints usando:
+Puedes probar los endpoints usando cualquiera de estas opciones:
 
-### cURL
+### 1. REST Client (VS Code) - **Recomendado** ⭐
+
+La forma más rápida y conveniente para desarrolladores:
+
+1. Instala la extensión: [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
+2. Abre el archivo [`api.http`](api.http) en VS Code
+3. Haz clic en "Send Request" sobre cualquier petición
+
+**El archivo incluye:**
+- ✅ Todas las operaciones CRUD configuradas
+- ✅ Variables de entorno (`@baseUrl`, `@apiUrl`)
+- ✅ Ejemplos de casos exitosos y errores
+- ✅ Casos de prueba para validaciones
+- ✅ CORS preflight requests
+
+### 2. Postman
+
+Importa la colección incluida en el proyecto:
+
+1. Abre Postman
+2. Importa `NodeJs-API.postman_collection.json`
+3. La colección incluye 7 requests pre-configurados
+
+### 3. cURL
 ```bash
 # Home
 curl http://localhost:3000/
@@ -456,7 +479,30 @@ curl -X PUT http://localhost:3000/api/data/1 \
 curl -X DELETE http://localhost:3000/api/data/1
 ```
 
-### Navegador
+### REST Client (VS Code)
+
+**Extensión recomendada:** [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
+
+1. Instala la extensión REST Client en VS Code
+2. Abre el archivo `api.http` en la raíz del proyecto
+3. Haz clic en "Send Request" sobre cualquier petición
+
+**Ventajas:**
+- ✅ Peticiones HTTP directamente desde VS Code
+- ✅ Variables de entorno configurables
+- ✅ Historial de respuestas
+- ✅ Syntax highlighting para HTTP
+- ✅ Sin necesidad de Postman
+
+```http
+### Ejemplo de uso
+GET http://localhost:3000/api/data
+Accept: application/json
+```
+
+Ver todas las peticiones configuradas en [`api.http`](api.http)
+
+### 4. Navegador
 Simplemente abre en tu navegador:
 - http://localhost:3000/
 - http://localhost:3000/api/status

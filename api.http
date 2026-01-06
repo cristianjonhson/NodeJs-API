@@ -1,0 +1,152 @@
+### Variables de entorno
+@baseUrl = http://localhost:3000
+@apiUrl = {{baseUrl}}/api
+
+###############################################################################
+# HOME ENDPOINT
+###############################################################################
+
+### GET Home - Información general de la API
+GET {{baseUrl}}/
+Accept: application/json
+
+###############################################################################
+# STATUS ENDPOINT
+###############################################################################
+
+### GET Status - Estado del servidor
+GET {{apiUrl}}/status
+Accept: application/json
+
+###############################################################################
+# DATA ENDPOINTS - CRUD Operations
+###############################################################################
+
+### GET All Data - Obtener todos los items
+GET {{apiUrl}}/data
+Accept: application/json
+
+###
+
+### GET Data by ID - Obtener item específico (ID: 1)
+GET {{apiUrl}}/data/1
+Accept: application/json
+
+###
+
+### GET Data by ID - Obtener item específico (ID: 2)
+GET {{apiUrl}}/data/2
+Accept: application/json
+
+###
+
+### GET Data by ID - Item no existente (404)
+GET {{apiUrl}}/data/999
+Accept: application/json
+
+###
+
+### POST Create Data - Crear nuevo item
+POST {{apiUrl}}/data
+Content-Type: application/json
+
+{
+  "name": "Item 4",
+  "description": "Cuarto elemento creado desde REST Client"
+}
+
+###
+
+### POST Create Data - Sin campo requerido (400 Error)
+POST {{apiUrl}}/data
+Content-Type: application/json
+
+{
+  "description": "Item sin nombre - debería fallar"
+}
+
+###
+
+### PUT Update Data - Actualizar item existente (ID: 1)
+PUT {{apiUrl}}/data/1
+Content-Type: application/json
+
+{
+  "name": "Item 1 Actualizado",
+  "description": "Descripción actualizada desde REST Client"
+}
+
+###
+
+### PUT Update Data - Actualización parcial (solo name)
+PUT {{apiUrl}}/data/2
+Content-Type: application/json
+
+{
+  "name": "Item 2 - Solo nombre actualizado"
+}
+
+###
+
+### PUT Update Data - Item no existente (404)
+PUT {{apiUrl}}/data/999
+Content-Type: application/json
+
+{
+  "name": "Item inexistente",
+  "description": "Esto debería devolver 404"
+}
+
+###
+
+### DELETE Data - Eliminar item (ID: 3)
+DELETE {{apiUrl}}/data/3
+Accept: application/json
+
+###
+
+### DELETE Data - Item no existente (404)
+DELETE {{apiUrl}}/data/999
+Accept: application/json
+
+###############################################################################
+# CORS PREFLIGHT
+###############################################################################
+
+### OPTIONS - CORS Preflight Request
+OPTIONS {{apiUrl}}/data
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type
+Origin: http://example.com
+
+###############################################################################
+# ERROR HANDLING
+###############################################################################
+
+### GET 404 - Ruta no existente
+GET {{apiUrl}}/invalid-endpoint
+Accept: application/json
+
+###
+
+### POST Invalid JSON - Error de parseo
+POST {{apiUrl}}/data
+Content-Type: application/json
+
+{
+  "name": "Invalid JSON - falta comilla
+
+###############################################################################
+# TESTING DIFFERENT ENVIRONMENTS
+###############################################################################
+
+# Descomenta y modifica según tu entorno
+
+# ### Development
+# @baseUrl = http://localhost:3000
+
+# ### Production
+# @baseUrl = https://mi-api.com
+
+# ### Custom Port
+# @baseUrl = http://localhost:8080
