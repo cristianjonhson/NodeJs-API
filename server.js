@@ -12,6 +12,8 @@ const { handleRoute, handleNotFound } = require('./src/routes')
 /**
  * Crea y configura el servidor HTTP
  * Aplica middleware y enruta las peticiones
+ * @param {http.IncomingMessage} req - Objeto de petición HTTP
+ * @param {http.ServerResponse} res - Objeto de respuesta HTTP
  */
 const server = http.createServer((req, res) => {
   // Aplicar middleware CORS
@@ -31,6 +33,7 @@ const server = http.createServer((req, res) => {
 
 /**
  * Inicia el servidor en el puerto y host configurados
+ * Callback ejecutado cuando el servidor está listo
  */
 server.listen(config.PORT, config.HOST, () => {
   console.log(`🚀 Servidor corriendo en http://${config.HOST}:${config.PORT}`)
@@ -43,6 +46,7 @@ server.listen(config.PORT, config.HOST, () => {
 
 /**
  * Maneja errores del servidor
+ * @param {Error} error - Objeto de error con información del fallo
  */
 server.on('error', (error) => {
   if (error.code === 'EADDRINUSE') {
@@ -57,6 +61,7 @@ server.on('error', (error) => {
 
 /**
  * Manejo de señales de terminación para graceful shutdown
+ * @param {string} signal - Nombre de la señal recibida (SIGTERM, SIGINT, etc.)
  */
 const gracefulShutdown = (signal) => {
   console.log(`\n⚠️  Señal ${signal} recibida, cerrando servidor...`)
