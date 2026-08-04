@@ -4,14 +4,10 @@
  * Las operaciones principales incluyen obtener, crear, actualizar y eliminar datos.
  */
 
-const {
-  getAllData,
-  getDataById: getDataByIdService,
-  createData: createDataService,
-  updateData: updateDataService,
-  deleteData: deleteDataService
-} = require('../services/data.service')
 const { parseBody } = require('../utils/bodyParser')
+const { validateDataPayload, validateId } = require('../validators/data.validator')
+
+const createDataController = ({ dataService, responseBuilder, logger, config }) => {
 
 /**
  * Maneja la solicitud GET a /api/data.
@@ -19,16 +15,13 @@ const { parseBody } = require('../utils/bodyParser')
  * @param {Object} req - Objeto de solicitud HTTP.
  * @param {Object} res - Objeto de respuesta HTTP.
  */
-const getData = (req, res) => {
-  const data = getAllData()
-  res.statusCode = 200
-  res.setHeader('Content-Type', 'application/json; charset=utf-8')
-  res.end(JSON.stringify({
-    success: true,
+  const getData = (req, res) => {
+    const data = dataService.getAllData()
+    responseBuilder.success(res, 200, {
     count: data.length,
     data
-  }))
-}
+    })
+  }
 
 /**
  * Maneja la solicitud GET a /api/data/:id.
@@ -37,27 +30,24 @@ const getData = (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @param {number} id - ID del elemento a obtener.
  */
-const getDataById = (req, res, id) => {
-  const item = getDataByIdService(id)
+  const getDataById = (req, res, id) => {
+    const idErrors = validateId(id)
+    if (idErrors.length > 0) {
+      responseBuilder.error(res, 400, 'ID inválido', idErrors)
+      return
+    }
 
-  if (!item) {
-    res.statusCode = 404
-    res.setHeader('Content-Type', 'application/json; charset=utf-8')
-    res.end(JSON.stringify({
-      success: false,
-      error: 'Item no encontrado',
-      id
-    }))
-    return
-  }
+    const item = dataService.getDataById(id)
 
-  res.statusCode = 200
-  res.setHeader('Content-Type', 'application/json; charset=utf-8')
-  res.end(JSON.stringify({
-    success: true,
+    if (!item) {
+      responseBuilder.error(res, 404, 'Item no encontrado', { id })
+      return
+    }
+
+    responseBuilder.success(res, 200, {
     data: item
-  }))
-}
+    })
+  }
 
 /**
  * Maneja la solicitud POST a /api/data.
@@ -65,38 +55,28 @@ const getDataById = (req, res, id) => {
  * @param {Object} req - Objeto de solicitud HTTP.
  * @param {Object} res - Objeto de respuesta HTTP.
  */
-const createData = async (req, res) => {
-  try {
-    const body = await parseBody(req)
+  const createData = async (req, res) => {
+    try {
+      const body = await parseBody(req, { limitBytes: config.BODY_LIMIT_BYTES })
+      const errors = validateDataPayload(body, { requireName: true })
 
-    if (!body.name) {
-      res.statusCode = 400
-      res.setHeader('Content-Type', 'application/json; charset=utf-8')
-      res.end(JSON.stringify({
-        success: false,
-        error: 'El campo "name" es requerido'
-      }))
-      return
-    }
+      if (errors.length > 0) {
+        responseBuilder.error(res, 400, 'Datos inválidos', errors)
+        return
+      }
 
-    const newItem = createDataService(body)
+      const newItem = dataService.createData(body)
 
-    res.statusCode = 201
-    res.setHeader('Content-Type', 'application/json; charset=utf-8')
-    res.end(JSON.stringify({
-      success: true,
+      logger.info('Item created', { id: newItem.id })
+      responseBuilder.success(res, 201, {
       message: 'Item creado exitosamente',
       data: newItem
-    }))
-  } catch (error) {
-    res.statusCode = 400
-    res.setHeader('Content-Type', 'application/json; charset=utf-8')
-    res.end(JSON.stringify({
-      success: false,
-      error: 'Error al parsear el body: ' + error.message
-    }))
+      })
+    } catch (error) {
+      const statusCode = error.message === 'Payload too large' ? 413 : 400
+      responseBuilder.error(res, statusCode, 'Error al procesar el body', error.message)
+    }
   }
-}
 
 /**
  * Maneja la solicitud PUT a /api/data/:id.
@@ -105,38 +85,39 @@ const createData = async (req, res) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @param {number} id - ID del elemento a actualizar.
  */
-const updateData = async (req, res, id) => {
-  try {
-    const body = await parseBody(req)
-    const updatedItem = updateDataService(id, body)
+  const updateData = async (req, res, id) => {
+    try {
+      const idErrors = validateId(id)
+      if (idErrors.length > 0) {
+        responseBuilder.error(res, 400, 'ID inválido', idErrors)
+        return
+      }
 
-    if (!updatedItem) {
-      res.statusCode = 404
-      res.setHeader('Content-Type', 'application/json; charset=utf-8')
-      res.end(JSON.stringify({
-        success: false,
-        error: 'Item no encontrado',
-        id
-      }))
-      return
-    }
+      const body = await parseBody(req, { limitBytes: config.BODY_LIMIT_BYTES })
+      const errors = validateDataPayload(body)
 
-    res.statusCode = 200
-    res.setHeader('Content-Type', 'application/json; charset=utf-8')
-    res.end(JSON.stringify({
-      success: true,
+      if (errors.length > 0) {
+        responseBuilder.error(res, 400, 'Datos inválidos', errors)
+        return
+      }
+
+      const updatedItem = dataService.updateData(id, body)
+
+      if (!updatedItem) {
+        responseBuilder.error(res, 404, 'Item no encontrado', { id })
+        return
+      }
+
+      logger.info('Item updated', { id })
+      responseBuilder.success(res, 200, {
       message: 'Item actualizado exitosamente',
       data: updatedItem
-    }))
-  } catch (error) {
-    res.statusCode = 400
-    res.setHeader('Content-Type', 'application/json; charset=utf-8')
-    res.end(JSON.stringify({
-      success: false,
-      error: 'Error al parsear el body: ' + error.message
-    }))
+      })
+    } catch (error) {
+      const statusCode = error.message === 'Payload too large' ? 413 : 400
+      responseBuilder.error(res, statusCode, 'Error al procesar el body', error.message)
+    }
   }
-}
 
 /**
  * Maneja la solicitud DELETE a /api/data/:id.
@@ -145,27 +126,28 @@ const updateData = async (req, res, id) => {
  * @param {Object} res - Objeto de respuesta HTTP.
  * @param {number} id - ID del elemento a eliminar.
  */
-const deleteData = (req, res, id) => {
-  const deletedItem = deleteDataService(id)
+  const deleteData = (req, res, id) => {
+    const idErrors = validateId(id)
+    if (idErrors.length > 0) {
+      responseBuilder.error(res, 400, 'ID inválido', idErrors)
+      return
+    }
 
-  if (!deletedItem) {
-    res.statusCode = 404
-    res.setHeader('Content-Type', 'application/json; charset=utf-8')
-    res.end(JSON.stringify({
-      success: false,
-      error: 'Item no encontrado',
-      id
-    }))
-    return
-  }
+    const deletedItem = dataService.deleteData(id)
 
-  res.statusCode = 200
-  res.setHeader('Content-Type', 'application/json; charset=utf-8')
-  res.end(JSON.stringify({
-    success: true,
+    if (!deletedItem) {
+      responseBuilder.error(res, 404, 'Item no encontrado', { id })
+      return
+    }
+
+    logger.info('Item deleted', { id })
+    responseBuilder.success(res, 200, {
     message: 'Item eliminado exitosamente',
     data: deletedItem
-  }))
+    })
+  }
+
+  return { getData, getDataById, createData, updateData, deleteData }
 }
 
-module.exports = { getData, getDataById, createData, updateData, deleteData }
+module.exports = { createDataController }
