@@ -3,6 +3,8 @@
  * Extrae y parsea datos JSON del stream de la petición
  */
 
+const { AppError } = require('./appError')
+
 /**
  * Parsea el body de una petición HTTP
  * @param {Object} req - Objeto de petición HTTP
@@ -23,7 +25,7 @@ const parseBody = (req, options = {}) => {
 
       if (size > limitBytes) {
         rejected = true
-        reject(new Error('Payload too large'))
+        reject(new AppError(413, 'Payload demasiado grande'))
         return
       }
 
@@ -37,7 +39,7 @@ const parseBody = (req, options = {}) => {
         const parsed = body ? JSON.parse(body) : {}
         resolve(parsed)
       } catch (error) {
-        reject(new Error('Invalid JSON'))
+        reject(new AppError(400, 'JSON inválido'))
       }
     })
 
