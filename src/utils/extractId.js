@@ -6,6 +6,8 @@
  */
 function extractId (url, baseUrl) {
   const path = url.replace(baseUrl + '/', '')
+  if (!/^\d+$/.test(path)) return null
+
   const id = parseInt(path, 10)
   return isNaN(id) ? null : id
 }
