@@ -5,9 +5,10 @@
  */
 
 const http = require('node:http')
-const config = require('./src/config/server.config')
 const { applyCors, handleOptions } = require('./src/middleware/cors.middleware')
-const { handleRoute, handleNotFound } = require('./src/routes')
+const { createContainer } = require('./src/container')
+
+const { config, logger, router, rateLimiter } = createContainer()
 
 /**
  * Crea y configura el servidor HTTP
@@ -16,18 +17,33 @@ const { handleRoute, handleNotFound } = require('./src/routes')
  * @param {http.ServerResponse} res - Objeto de respuesta HTTP
  */
 const server = http.createServer((req, res) => {
+  const startedAt = Date.now()
+
+  res.on('finish', () => {
+    logger.info('Request completed', {
+      method: req.method,
+      url: req.url,
+      statusCode: res.statusCode,
+      durationMs: Date.now() - startedAt,
+      ip: req.socket.remoteAddress
+    })
+  })
+
   // Aplicar middleware CORS
   applyCors(res)
 
   // Manejar peticiones OPTIONS (CORS preflight)
   if (handleOptions(req, res)) return
 
+  // Aplicar protección básica contra abuso
+  if (rateLimiter(req, res)) return
+
   // Intentar enrutar la petición
-  const routeFound = handleRoute(req, res)
+  const routeFound = router.handleRoute(req, res)
 
   // Si no se encontró una ruta, devolver 404
   if (!routeFound) {
-    handleNotFound(req, res)
+    router.handleNotFound(req, res)
   }
 })
 
@@ -36,12 +52,12 @@ const server = http.createServer((req, res) => {
  * Callback ejecutado cuando el servidor está listo
  */
 server.listen(config.PORT, config.HOST, () => {
-  console.log(`🚀 Servidor corriendo en http://${config.HOST}:${config.PORT}`)
-  console.log('📝 Endpoints disponibles:')
-  console.log(`   - http://${config.HOST}:${config.PORT}/`)
-  console.log(`   - http://${config.HOST}:${config.PORT}/api/status`)
-  console.log(`   - http://${config.HOST}:${config.PORT}/api/data`)
-  console.log(`🌍 Entorno: ${process.env.NODE_ENV || 'development'}`)
+  logger.info('Server started', {
+    host: config.HOST,
+    port: config.PORT,
+    environment: process.env.NODE_ENV || 'development',
+    endpoints: ['/', '/api/status', '/api/data']
+  })
 })
 
 /**
@@ -50,11 +66,11 @@ server.listen(config.PORT, config.HOST, () => {
  */
 server.on('error', (error) => {
   if (error.code === 'EADDRINUSE') {
-    console.error(`❌ Error: El puerto ${config.PORT} ya está en uso`)
+    logger.error('Port already in use', { port: config.PORT })
   } else if (error.code === 'EACCES') {
-    console.error(`❌ Error: Sin permisos para usar el puerto ${config.PORT}`)
+    logger.error('Insufficient permissions for port', { port: config.PORT })
   } else {
-    console.error('❌ Error en el servidor:', error)
+    logger.error('Server error', { error: error.message, stack: error.stack })
   }
   process.exit(1)
 })
@@ -64,15 +80,15 @@ server.on('error', (error) => {
  * @param {string} signal - Nombre de la señal recibida (SIGTERM, SIGINT, etc.)
  */
 const gracefulShutdown = (signal) => {
-  console.log(`\n⚠️  Señal ${signal} recibida, cerrando servidor...`)
+  logger.warn('Shutdown signal received', { signal })
   server.close(() => {
-    console.log('✅ Servidor cerrado correctamente')
+    logger.info('Server closed successfully')
     process.exit(0)
   })
 
   // Forzar cierre después de 10 segundos
   setTimeout(() => {
-    console.error('⚠️  Forzando cierre del servidor')
+    logger.error('Forcing server shutdown')
     process.exit(1)
   }, 10000)
 }
