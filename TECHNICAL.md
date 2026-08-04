@@ -6,7 +6,7 @@ Este documento proporciona información técnica detallada sobre las diferentes 
 
 ### Tabla Comparativa
 
-| Característica | `node server.js` | `npm start` | `npm run dev` |
+| Característica | `node server.js` | `pnpm start` | `pnpm dev` |
 |----------------|------------------|-------------|---------------|
 | **Auto-reload** | ❌ No | ❌ No | ✅ Sí (--watch) |
 | **Velocidad de inicio** | ⚡ Más rápido | 🔄 Normal | 🔄 Normal |
@@ -42,7 +42,7 @@ Shell → fork() → execve('/usr/local/bin/node', ['node', 'server.js'])
 
 1. **Latencia mínima de inicio**
    - Sin intermediarios entre shell y Node.js
-   - Ahorro de ~50-100ms en spawn de proceso npm
+   - Ahorro de ~50-100ms en spawn de proceso del gestor de paquetes
    - No hay parsing de package.json
 
 2. **Control de proceso directo**
@@ -51,7 +51,7 @@ Shell → fork() → execve('/usr/local/bin/node', ['node', 'server.js'])
    - Fácil integración con systemd/init.d
 
 3. **Zero overhead operacional**
-   - No ejecuta hooks de npm (prestart, poststart)
+   - No ejecuta hooks de scripts (prestart, poststart)
    - Sin parseo de scripts adicionales
    - Menor huella de memoria (~5-10MB menos)
 
@@ -71,7 +71,7 @@ Shell → fork() → execve('/usr/local/bin/node', ['node', 'server.js'])
    ```
 
 5. **Stdout/stderr sin buffering**
-   - Output directo al terminal sin redirección de npm
+   - Output directo al terminal sin redirección del gestor de paquetes
    - Mejor para logging en tiempo real
    - Útil para tail/grep en producción
 
@@ -97,20 +97,20 @@ Shell → fork() → execve('/usr/local/bin/node', ['node', 'server.js'])
 
 ---
 
-### 2. `npm start` - Ejecución Mediante npm Lifecycle
+### 2. `pnpm start` - Ejecución Mediante pnpm Lifecycle
 
 #### Arquitectura del Proceso
 
 ```bash
-npm start
-# Shell spawns → npm (PID: 12345)
-#   └─ npm spawns → node server.js (PID: 12346)
+pnpm start
+# Shell spawns → pnpm (PID: 12345)
+#   └─ pnpm spawns → node server.js (PID: 12346)
 ```
 
 **Process tree completo:**
 ```
 zsh (PID: 1000)
-  └─ npm (PID: 12345)
+  └─ pnpm (PID: 12345)
       ├─ sh -c "node server.js" (PID: 12346)
       └─ node server.js (PID: 12347)
 ```
@@ -133,7 +133,7 @@ zsh (PID: 1000)
    {
      "scripts": {
        "start": "node server.js",
-       "start:prod": "NODE_ENV=production npm start",
+        "start:prod": "NODE_ENV=production pnpm start",
        "start:cluster": "node -r cluster server.js"
      }
    }
@@ -153,56 +153,56 @@ zsh (PID: 1000)
    - Comandos funcionan igual en Linux/macOS/Windows
    - No necesitas scripts .sh y .bat separados
 
-5. **Integración con ecosistema npm**
+5. **Integración con el ecosistema de paquetes de Node.js**
    ```bash
-   # Config desde .npmrc
-   npm config set nodejs-api:port 8080
+    # Config desde .npmrc compatible
+    pnpm config set nodejs-api:port 8080
    
-   # Variables desde npm config
-   npm start --port=3001
+    # Variables desde config
+    pnpm start --port=3001
    ```
 
 #### ❌ Desventajas Técnicas
 
 1. **Overhead de doble proceso**
-   - npm wrapper añade ~5-10ms al startup
+   - pnpm wrapper añade ~5-10ms al startup
    - Consumo adicional de memoria (~5-10MB)
    - Árbol de procesos más complejo
 
 2. **Propagación de señales indirecta**
    ```bash
-   # SIGTERM a npm debe propagarse a node
-   kill -TERM <npm-pid>  # npm recibe SIGTERM
-     └─ npm envía SIGTERM a node
+    # SIGTERM a pnpm debe propagarse a node
+    kill -TERM <pnpm-pid>  # pnpm recibe SIGTERM
+      └─ pnpm envía SIGTERM a node
          └─ node ejecuta graceful shutdown
    ```
 
 3. **Debugging más complejo**
    ```bash
    # NO funciona:
-   npm start --inspect
+    pnpm start --inspect
    
    # Debe ser:
-   npm start --node-options="--inspect"
+    pnpm start --node-options="--inspect"
    
    # O mejor:
    node --inspect server.js
    ```
 
 4. **Output buffering potencial**
-   - npm puede bufferear stdout/stderr
+   - pnpm puede bufferear stdout/stderr
    - Puede causar delays en logs
    - Afecta streaming de datos en tiempo real
 
 ---
 
-### 3. `npm run dev` - Modo Watch con File System Monitoring
+### 3. `pnpm dev` - Modo Watch con File System Monitoring
 
 #### Arquitectura del Proceso
 
 ```bash
-npm run dev  # node --watch server.js
-# npm (PID: 12345)
+pnpm dev  # nodemon server.js
+# pnpm (PID: 12345)
 #   └─ node (PID: 12346)
 #       ├─ fs.watch() monitoring (inotify/FSEvents/ReadDirectoryChangesW)
 #       ├─ Main thread (HTTP server)
@@ -422,7 +422,7 @@ watcher.start();
 - SSD: NVMe 1TB
 - OS: Ubuntu 22.04 LTS
 
-| Métrica | `node` | `npm start` | `npm run dev` |
+| Métrica | `node` | `pnpm start` | `pnpm dev` |
 |---------|--------|-------------|---------------|
 | **Tiempo de inicio** | 52ms | 118ms | 125ms |
 | **Memoria base (RSS)** | 31.2MB | 37.8MB | 48.5MB |
@@ -443,15 +443,15 @@ watcher.start();
 hyperfine --warmup 3 'node server.js & sleep 1; kill %1'
 # Resultado: 52.3ms ± 2.1ms
 
-hyperfine --warmup 3 'npm start & sleep 1; kill %1'
+hyperfine --warmup 3 'pnpm start & sleep 1; kill %1'
 # Resultado: 118.7ms ± 5.4ms
 
-hyperfine --warmup 3 'npm run dev & sleep 1; kill %1'
+hyperfine --warmup 3 'pnpm dev & sleep 1; kill %1'
 # Resultado: 125.2ms ± 6.8ms
 ```
 
-**Breakdown del tiempo de npm start:**
-- npm binary load: ~20ms
+**Breakdown del tiempo de pnpm start:**
+- pnpm binary load: ~20ms
 - package.json parsing: ~15ms
 - Script resolution: ~8ms
 - Child process spawn: ~12ms
@@ -462,13 +462,13 @@ hyperfine --warmup 3 'npm run dev & sleep 1; kill %1'
 
 ### Tabla de Propagación de Señales
 
-| Señal | Código | `node` | `npm start` | `npm run dev` |
+| Señal | Código | `node` | `pnpm start` | `pnpm dev` |
 |-------|--------|--------|-------------|---------------|
-| **SIGTERM** | 15 | ✅ Directo al proceso | ⚠️ npm → node (delay ~10ms) | ⚠️ npm → node → watcher |
-| **SIGINT (Ctrl+C)** | 2 | ✅ Directo | ✅ npm intercepta y limpia | ✅ Cleanup + watcher stop |
+| **SIGTERM** | 15 | ✅ Directo al proceso | ⚠️ pnpm → node (delay ~10ms) | ⚠️ pnpm → node → watcher |
+| **SIGINT (Ctrl+C)** | 2 | ✅ Directo | ✅ pnpm intercepta y limpia | ✅ Cleanup + watcher stop |
 | **SIGHUP** | 1 | ✅ Directo | ⚠️ Propagado | ⚠️ Propagado |
-| **SIGKILL** | 9 | ⚠️ Kill inmediato | ⚠️ Mata npm, node huérfano | ⚠️ Watcher puede quedar zombie |
-| **SIGQUIT** | 3 | ✅ Core dump | ⚠️ npm maneja | ⚠️ npm maneja |
+| **SIGKILL** | 9 | ⚠️ Kill inmediato | ⚠️ Mata pnpm, node huérfano | ⚠️ Watcher puede quedar zombie |
+| **SIGQUIT** | 3 | ✅ Core dump | ⚠️ pnpm maneja | ⚠️ pnpm maneja |
 | **SIGUSR1** | 10 | ✅ Node debugger | ⚠️ Debe configurarse | ⚠️ Debe configurarse |
 | **SIGUSR2** | 12 | ✅ Custom handlers | ⚠️ Debe configurarse | ⚠️ Debe configurarse |
 
@@ -515,8 +515,8 @@ process.on('SIGINT', () => shutdown('SIGINT'));
 
 ### Desarrollo Local
 ```bash
-# Mejor opción: npm run dev
-npm run dev
+# Mejor opción: pnpm dev
+pnpm dev
 # ✅ Auto-reload automático
 # ✅ Feedback inmediato
 # ✅ Mayor productividad
@@ -531,14 +531,14 @@ SERVER_PID=$!
 kill $SERVER_PID
 
 # ✅ Control preciso del proceso
-# ✅ Sin overhead de npm
+# ✅ Sin overhead del gestor de paquetes
 # ✅ Fácil scripting
 ```
 
 ### Producción / Docker
 ```bash
-# Mejor opción: npm start
-npm start
+# Mejor opción: pnpm start
+pnpm start
 # ✅ Estándar de la industria
 # ✅ Lifecycle hooks disponibles
 # ✅ Compatible con orquestadores
@@ -566,7 +566,7 @@ node --prof --log-internal-timer-events server.js
 
 - [Node.js Process Documentation](https://nodejs.org/api/process.html)
 - [Node.js File System Watch](https://nodejs.org/api/fs.html#fswatchfilename-options-listener)
-- [npm Scripts Documentation](https://docs.npmjs.com/cli/v9/using-npm/scripts)
+- [pnpm Scripts Documentation](https://pnpm.io/cli/run)
 - [Linux inotify](https://man7.org/linux/man-pages/man7/inotify.7.html)
 - [macOS FSEvents](https://developer.apple.com/documentation/coreservices/file_system_events)
 - [libuv Documentation](http://docs.libuv.org/)
