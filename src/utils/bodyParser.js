@@ -14,13 +14,16 @@ const parseBody = (req, options = {}) => {
   return new Promise((resolve, reject) => {
     let body = ''
     let size = 0
+    let rejected = false
 
     req.on('data', (chunk) => {
+      if (rejected) return
+
       size += chunk.length
 
       if (size > limitBytes) {
+        rejected = true
         reject(new Error('Payload too large'))
-        req.destroy()
         return
       }
 
@@ -28,6 +31,8 @@ const parseBody = (req, options = {}) => {
     })
 
     req.on('end', () => {
+      if (rejected) return
+
       try {
         const parsed = body ? JSON.parse(body) : {}
         resolve(parsed)
