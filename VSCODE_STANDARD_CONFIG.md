@@ -244,7 +244,7 @@ Ver todas las reglas: https://standardjs.com/rules.html
 2. ✅ **Productividad**: No pierdes tiempo formateando manualmente
 3. ✅ **Calidad**: Detecta errores comunes antes de ejecutar el código
 4. ✅ **Sin Configuración**: Zero config, funciona out-of-the-box
-5. ✅ **Estándar de la Industria**: Usado por npm, GitHub, MongoDB, Express, etc.
+5. ✅ **Estándar de la Industria**: Usado por GitHub, MongoDB, Express, etc.
 
 ---
 
