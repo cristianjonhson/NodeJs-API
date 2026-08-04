@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
 yarn.lock
 pnpm-debug.log*
 
@@ -52,8 +51,8 @@ tmp/
 temp/
 *.tmp
 
-# Optional npm cache directory
-.npm
+# Optional pnpm store directory
+.pnpm-store/
 
 # Optional eslint cache
 .eslintcache
