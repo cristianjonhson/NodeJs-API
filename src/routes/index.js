@@ -1,29 +1,19 @@
 /**
- * Router principal de la aplicación
- * Centraliza el manejo de rutas y las conecta con sus controladores
+ * Archivo principal de rutas de la aplicación.
+ * Este archivo centraliza todas las rutas y delega su manejo a los módulos correspondientes.
  */
 
 const homeController = require('../controllers/home.controller')
 const statusController = require('../controllers/status.controller')
 const dataController = require('../controllers/data.controller')
+const { extractId } = require('../utils/extractId')
 
 /**
- * Extrae el ID de una URL con parámetros
- * @param {string} url - URL de la petición
- * @param {string} baseUrl - URL base del endpoint
- * @returns {number|null} - ID extraído o null si no hay ID
- */
-const extractId = (url, baseUrl) => {
-  const path = url.replace(baseUrl + '/', '')
-  const id = parseInt(path, 10)
-  return isNaN(id) ? null : id
-}
-
-/**
- * Enruta las peticiones a sus controladores correspondientes
- * @param {Object} req - Objeto de petición HTTP
- * @param {Object} res - Objeto de respuesta HTTP
- * @returns {boolean} - True si se encontró una ruta, false si no
+ * Maneja las rutas principales de la aplicación.
+ * Este método delega las rutas específicas a sus respectivos módulos.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @returns {boolean} - Devuelve true si se manejó la ruta, de lo contrario false.
  */
 const handleRoute = (req, res) => {
   // Ruta principal (Home)
@@ -82,9 +72,10 @@ const handleRoute = (req, res) => {
 }
 
 /**
- * Maneja errores 404 (Not Found)
- * @param {Object} req - Objeto de petición HTTP
- * @param {Object} res - Objeto de respuesta HTTP
+ * Maneja errores 404 (Not Found).
+ * Este método se utiliza cuando no se encuentra una ruta válida.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
  */
 const handleNotFound = (req, res) => {
   res.statusCode = 404
