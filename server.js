@@ -8,7 +8,27 @@ const http = require('node:http')
 const { applyCors, handleOptions } = require('./src/middleware/cors.middleware')
 const { createContainer } = require('./src/container')
 
-const { config, logger, router, rateLimiter } = createContainer()
+const { config, logger, router, rateLimiter, responseBuilder } = createContainer()
+
+const handleRequestError = (error, req, res) => {
+  const statusCode = error.statusCode || 500
+  const message = statusCode === 500 ? 'Error interno del servidor' : error.message
+
+  logger.error('Request failed', {
+    method: req.method,
+    url: req.url,
+    statusCode,
+    error: error.message,
+    stack: error.stack
+  })
+
+  if (!res.headersSent) {
+    responseBuilder.error(res, statusCode, message, error.details)
+    return
+  }
+
+  res.end()
+}
 
 /**
  * Crea y configura el servidor HTTP
@@ -16,7 +36,7 @@ const { config, logger, router, rateLimiter } = createContainer()
  * @param {http.IncomingMessage} req - Objeto de petición HTTP
  * @param {http.ServerResponse} res - Objeto de respuesta HTTP
  */
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const startedAt = Date.now()
 
   res.on('finish', () => {
@@ -29,23 +49,38 @@ const server = http.createServer((req, res) => {
     })
   })
 
-  // Aplicar middleware CORS
-  applyCors(res)
+  req.setTimeout(config.TIMEOUTS.requestTimeout, () => {
+    if (!res.headersSent) {
+      responseBuilder.error(res, 408, 'Tiempo de espera agotado')
+    }
+    req.destroy()
+  })
 
-  // Manejar peticiones OPTIONS (CORS preflight)
-  if (handleOptions(req, res)) return
+  try {
+    // Aplicar middleware CORS
+    applyCors(req, res)
 
-  // Aplicar protección básica contra abuso
-  if (rateLimiter(req, res)) return
+    // Manejar peticiones OPTIONS (CORS preflight)
+    if (handleOptions(req, res, responseBuilder)) return
 
-  // Intentar enrutar la petición
-  const routeFound = router.handleRoute(req, res)
+    // Aplicar protección básica contra abuso
+    if (rateLimiter(req, res)) return
 
-  // Si no se encontró una ruta, devolver 404
-  if (!routeFound) {
-    router.handleNotFound(req, res)
+    // Intentar enrutar la petición
+    const routeFound = await router.handleRoute(req, res)
+
+    // Si no se encontró una ruta, devolver 404
+    if (!routeFound) {
+      router.handleNotFound(req, res)
+    }
+  } catch (error) {
+    handleRequestError(error, req, res)
   }
 })
+
+server.requestTimeout = config.TIMEOUTS.requestTimeout
+server.headersTimeout = config.TIMEOUTS.headersTimeout
+server.keepAliveTimeout = config.TIMEOUTS.keepAliveTimeout
 
 /**
  * Inicia el servidor en el puerto y host configurados
@@ -56,6 +91,7 @@ server.listen(config.PORT, config.HOST, () => {
     host: config.HOST,
     port: config.PORT,
     environment: process.env.NODE_ENV || 'development',
+    timeouts: config.TIMEOUTS,
     endpoints: ['/', '/api/status', '/api/data']
   })
 })
