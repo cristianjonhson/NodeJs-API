@@ -52,7 +52,7 @@ NodeJs-API/
 │   │   └── index.js                     # Sistema de rutas centralizado
 │   └── utils/
 │       └── bodyParser.js                # Utilidad para parsear JSON body
-├── package.json                          # Configuración de npm y scripts
+├── package.json                          # Configuración de pnpm y scripts
 ├── NodeJs-API.postman_collection.json   # Colección de Postman
 ├── .gitignore                            # Archivos ignorados por Git
 └── README.md                             # Documentación del proyecto
@@ -73,13 +73,14 @@ NodeJs-API/
 Antes de comenzar, asegúrate de tener instalado:
 
 - [Node.js](https://nodejs.org/) (v14 o superior)
+- [pnpm](https://pnpm.io/) (v10 o superior)
 - [Git](https://git-scm.com/)
 
 Verifica las instalaciones:
 
 ```bash
 node --version
-npm --version
+pnpm --version
 git --version
 ```
 
@@ -100,7 +101,7 @@ cd NodeJs-API
 3. Instala las dependencias de desarrollo (Nodemon, StandardJS):
 
 ```bash
-npm install
+pnpm install
 ```
 
 **Nota:** Este proyecto usa solo módulos nativos de Node.js en producción. Las dependencias instaladas (`nodemon` y `standard`) son solo para desarrollo.
@@ -144,34 +145,34 @@ $env:HOST="0.0.0.0"
 node server.js
 ```
 
-### Usando npm scripts:
+### Usando pnpm scripts:
 
 ```bash
 # Iniciar el servidor en modo producción
-npm start
+pnpm start
 
 # Iniciar en modo desarrollo con Nodemon (auto-reload)
-npm run dev
+pnpm dev
 ```
 
 **Scripts disponibles:**
-- `npm start` - Inicia el servidor en modo producción
-- `npm run dev` - Inicia con Nodemon (recarga automática en cambios)
-- `npm test` - Ejecuta tests (aún no configurado)
-- `npm run lint` - Verifica el código con StandardJS
-- `npm run lint:fix` - Corrige automáticamente problemas de estilo
+- `pnpm start` - Inicia el servidor en modo producción
+- `pnpm dev` - Inicia con Nodemon (recarga automática en cambios)
+- `pnpm test` - Ejecuta tests (aún no configurado)
+- `pnpm lint` - Verifica el código con StandardJS
+- `pnpm lint:fix` - Corrige automáticamente problemas de estilo
 
 ### Diferencias entre Comandos
 
 | Comando | Uso recomendado | Auto-reload | Herramienta | Node.js requerido |
 |---------|----------------|-------------|-------------|-------------------|
 | `node server.js` | Testing/CI, control directo | ❌ No | Node nativo | v14+ |
-| `npm start` | Producción, deployment | ❌ No | Node nativo | v14+ |
-| `npm run dev` | Desarrollo local | ✅ Sí | Nodemon | v14+ |
+| `pnpm start` | Producción, deployment | ❌ No | Node nativo | v14+ |
+| `pnpm dev` | Desarrollo local | ✅ Sí | Nodemon | v14+ |
 
 **💡 Recomendación rápida:**
-- **Desarrollo:** `npm run dev` - Nodemon reinicia el servidor automáticamente al guardar cambios
-- **Producción:** `npm start` - Estándar de la industria
+- **Desarrollo:** `pnpm dev` - Nodemon reinicia el servidor automáticamente al guardar cambios
+- **Producción:** `pnpm start` - Estándar de la industria
 - **Testing:** `node server.js` - Mayor control del proceso
 
 ### Configuración de Nodemon
@@ -626,7 +627,7 @@ El código está completamente comentado y organizado modularmente. Ventajas de 
 ## 📝 Notas
 
 - Este proyecto utiliza el prefijo `node:` en las importaciones (`require('node:http')`) para indicar explícitamente módulos nativos de Node.js
-- No se requiere instalación de dependencias (`npm install`) ya que solo usa módulos nativos
+- No se requiere instalación de dependencias de producción (`pnpm install`) ya que solo usa módulos nativos
 - Implementa patrones de diseño profesionales sin frameworks
 - Ideal para aprendizaje de arquitectura de software y Node.js a bajo nivel
 - Para proyectos en producción a gran escala, considera usar frameworks como Express.js, Fastify o NestJS
