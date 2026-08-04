@@ -16,5 +16,19 @@ module.exports = {
     allowedOrigins: process.env.ALLOWED_ORIGINS || '*',
     allowedMethods: 'GET, POST, PUT, DELETE',
     allowedHeaders: 'Content-Type'
+  },
+
+  // Límite máximo del body JSON en bytes
+  BODY_LIMIT_BYTES: Number(process.env.BODY_LIMIT_BYTES || 1024 * 1024),
+
+  // Protección básica contra abuso por IP
+  RATE_LIMIT: {
+    windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS || 60 * 1000),
+    maxRequests: Number(process.env.RATE_LIMIT_MAX_REQUESTS || 100)
+  },
+
+  // Umbral de memoria para reportar degradación en health check
+  HEALTH: {
+    maxHeapUsedRatio: Number(process.env.HEALTH_MAX_HEAP_USED_RATIO || 0.9)
   }
 }
