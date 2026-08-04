@@ -29,6 +29,6 @@ module.exports = {
 
   // Umbral de memoria para reportar degradación en health check
   HEALTH: {
-    maxHeapUsedRatio: Number(process.env.HEALTH_MAX_HEAP_USED_RATIO || 0.9)
+    maxHeapUsedRatio: Number(process.env.HEALTH_MAX_HEAP_USED_RATIO || 0.98)
   }
 }
