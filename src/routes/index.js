@@ -29,17 +29,17 @@ const createRouter = ({ homeController, statusController, dataController, respon
     {
       method: 'GET',
       path: /^\/api\/data\/\d+$/,
-      handler: (req, res) => dataController.getDataById(req, res, extractId(req.url, '/api/data'))
+      handler: (req, res, pathname) => dataController.getDataById(req, res, extractId(pathname, '/api/data'))
     },
     {
       method: 'PUT',
       path: /^\/api\/data\/\d+$/,
-      handler: (req, res) => dataController.updateData(req, res, extractId(req.url, '/api/data'))
+      handler: (req, res, pathname) => dataController.updateData(req, res, extractId(pathname, '/api/data'))
     },
     {
       method: 'DELETE',
       path: /^\/api\/data\/\d+$/,
-      handler: (req, res) => dataController.deleteData(req, res, extractId(req.url, '/api/data'))
+      handler: (req, res, pathname) => dataController.deleteData(req, res, extractId(pathname, '/api/data'))
     }
   ]
 
@@ -65,7 +65,7 @@ const createRouter = ({ homeController, statusController, dataController, respon
       return true
     }
 
-    await route.handler(req, res)
+    await route.handler(req, res, pathname)
     return true
   }
 
