@@ -72,8 +72,7 @@ const createDataController = ({ dataService, responseBuilder, logger, config }) 
         data: newItem
       })
     } catch (error) {
-      const statusCode = error.message === 'Payload too large' ? 413 : 400
-      responseBuilder.error(res, statusCode, 'Error al procesar el body', error.message)
+      responseBuilder.error(res, error.statusCode || 400, 'Error al procesar el body', error.message)
     }
   }
 
@@ -113,8 +112,7 @@ const createDataController = ({ dataService, responseBuilder, logger, config }) 
         data: updatedItem
       })
     } catch (error) {
-      const statusCode = error.message === 'Payload too large' ? 413 : 400
-      responseBuilder.error(res, statusCode, 'Error al procesar el body', error.message)
+      responseBuilder.error(res, error.statusCode || 400, 'Error al procesar el body', error.message)
     }
   }
 
