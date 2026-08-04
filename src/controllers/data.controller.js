@@ -1,48 +1,44 @@
 /**
- * Controlador para el endpoint de datos
- * Responsable de la lógica de negocio relacionada con datos de ejemplo
+ * Controlador para el manejo de datos.
+ * Este archivo contiene las funciones que gestionan las solicitudes HTTP relacionadas con los datos.
+ * Las operaciones principales incluyen obtener, crear, actualizar y eliminar datos.
  */
 
+const {
+  getAllData,
+  getDataById: getDataByIdService,
+  createData: createDataService,
+  updateData: updateDataService,
+  deleteData: deleteDataService
+} = require('../services/data.service')
 const { parseBody } = require('../utils/bodyParser')
 
 /**
- * Simula una base de datos en memoria
- * En producción, esto vendría de una base de datos real
- */
-const mockData = [
-  { id: 1, name: 'Item 1', description: 'Primer elemento de ejemplo' },
-  { id: 2, name: 'Item 2', description: 'Segundo elemento de ejemplo' },
-  { id: 3, name: 'Item 3', description: 'Tercer elemento de ejemplo' }
-]
-
-// Contador para IDs auto-incrementales
-let nextId = 4
-
-/**
- * Maneja la petición GET a /api/data
- * Devuelve un array de datos de ejemplo
- * @param {Object} req - Objeto de petición HTTP
- * @param {Object} res - Objeto de respuesta HTTP
+ * Maneja la solicitud GET a /api/data.
+ * Devuelve todos los elementos disponibles.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
  */
 const getData = (req, res) => {
+  const data = getAllData()
   res.statusCode = 200
   res.setHeader('Content-Type', 'application/json; charset=utf-8')
   res.end(JSON.stringify({
     success: true,
-    count: mockData.length,
-    data: mockData
+    count: data.length,
+    data
   }))
 }
 
 /**
- * Maneja la petición GET a /api/data/:id
- * Devuelve un elemento específico por ID
- * @param {Object} req - Objeto de petición HTTP
- * @param {Object} res - Objeto de respuesta HTTP
- * @param {number} id - ID del elemento a obtener
+ * Maneja la solicitud GET a /api/data/:id.
+ * Devuelve un elemento específico basado en su ID.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @param {number} id - ID del elemento a obtener.
  */
 const getDataById = (req, res, id) => {
-  const item = mockData.find(item => item.id === id)
+  const item = getDataByIdService(id)
 
   if (!item) {
     res.statusCode = 404
@@ -64,10 +60,10 @@ const getDataById = (req, res, id) => {
 }
 
 /**
- * Maneja la petición POST a /api/data
- * Crea un nuevo elemento
- * @param {Object} req - Objeto de petición HTTP
- * @param {Object} res - Objeto de respuesta HTTP
+ * Maneja la solicitud POST a /api/data.
+ * Crea un nuevo elemento basado en los datos proporcionados en el cuerpo de la solicitud.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
  */
 const createData = async (req, res) => {
   try {
@@ -83,13 +79,7 @@ const createData = async (req, res) => {
       return
     }
 
-    const newItem = {
-      id: nextId++,
-      name: body.name,
-      description: body.description || ''
-    }
-
-    mockData.push(newItem)
+    const newItem = createDataService(body)
 
     res.statusCode = 201
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
@@ -109,18 +99,18 @@ const createData = async (req, res) => {
 }
 
 /**
- * Maneja la petición PUT a /api/data/:id
- * Actualiza un elemento existente
- * @param {Object} req - Objeto de petición HTTP
- * @param {Object} res - Objeto de respuesta HTTP
- * @param {number} id - ID del elemento a actualizar
+ * Maneja la solicitud PUT a /api/data/:id.
+ * Actualiza un elemento existente basado en su ID y los datos proporcionados.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @param {number} id - ID del elemento a actualizar.
  */
 const updateData = async (req, res, id) => {
   try {
     const body = await parseBody(req)
-    const index = mockData.findIndex(item => item.id === id)
+    const updatedItem = updateDataService(id, body)
 
-    if (index === -1) {
+    if (!updatedItem) {
       res.statusCode = 404
       res.setHeader('Content-Type', 'application/json; charset=utf-8')
       res.end(JSON.stringify({
@@ -131,19 +121,12 @@ const updateData = async (req, res, id) => {
       return
     }
 
-    // Actualizar solo los campos proporcionados
-    mockData[index] = {
-      ...mockData[index],
-      name: body.name !== undefined ? body.name : mockData[index].name,
-      description: body.description !== undefined ? body.description : mockData[index].description
-    }
-
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.end(JSON.stringify({
       success: true,
       message: 'Item actualizado exitosamente',
-      data: mockData[index]
+      data: updatedItem
     }))
   } catch (error) {
     res.statusCode = 400
@@ -156,16 +139,16 @@ const updateData = async (req, res, id) => {
 }
 
 /**
- * Maneja la petición DELETE a /api/data/:id
- * Elimina un elemento
- * @param {Object} req - Objeto de petición HTTP
- * @param {Object} res - Objeto de respuesta HTTP
- * @param {number} id - ID del elemento a eliminar
+ * Maneja la solicitud DELETE a /api/data/:id.
+ * Elimina un elemento existente basado en su ID.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ * @param {number} id - ID del elemento a eliminar.
  */
 const deleteData = (req, res, id) => {
-  const index = mockData.findIndex(item => item.id === id)
+  const deletedItem = deleteDataService(id)
 
-  if (index === -1) {
+  if (!deletedItem) {
     res.statusCode = 404
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.end(JSON.stringify({
@@ -175,8 +158,6 @@ const deleteData = (req, res, id) => {
     }))
     return
   }
-
-  const deletedItem = mockData.splice(index, 1)[0]
 
   res.statusCode = 200
   res.setHeader('Content-Type', 'application/json; charset=utf-8')
