@@ -8,28 +8,27 @@ const { parseBody } = require('../utils/bodyParser')
 const { validateDataPayload, validateId } = require('../validators/data.validator')
 
 const createDataController = ({ dataService, responseBuilder, logger, config }) => {
-
-/**
- * Maneja la solicitud GET a /api/data.
- * Devuelve todos los elementos disponibles.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- */
+  /**
+   * Maneja la solicitud GET a /api/data.
+   * Devuelve todos los elementos disponibles.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
   const getData = (req, res) => {
     const data = dataService.getAllData()
     responseBuilder.success(res, 200, {
-    count: data.length,
-    data
+      count: data.length,
+      data
     })
   }
 
-/**
- * Maneja la solicitud GET a /api/data/:id.
- * Devuelve un elemento específico basado en su ID.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @param {number} id - ID del elemento a obtener.
- */
+  /**
+   * Maneja la solicitud GET a /api/data/:id.
+   * Devuelve un elemento específico basado en su ID.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   * @param {number} id - ID del elemento a obtener.
+   */
   const getDataById = (req, res, id) => {
     const idErrors = validateId(id)
     if (idErrors.length > 0) {
@@ -45,16 +44,16 @@ const createDataController = ({ dataService, responseBuilder, logger, config }) 
     }
 
     responseBuilder.success(res, 200, {
-    data: item
+      data: item
     })
   }
 
-/**
- * Maneja la solicitud POST a /api/data.
- * Crea un nuevo elemento basado en los datos proporcionados en el cuerpo de la solicitud.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- */
+  /**
+   * Maneja la solicitud POST a /api/data.
+   * Crea un nuevo elemento basado en los datos proporcionados en el cuerpo de la solicitud.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
   const createData = async (req, res) => {
     try {
       const body = await parseBody(req, { limitBytes: config.BODY_LIMIT_BYTES })
@@ -69,8 +68,8 @@ const createDataController = ({ dataService, responseBuilder, logger, config }) 
 
       logger.info('Item created', { id: newItem.id })
       responseBuilder.success(res, 201, {
-      message: 'Item creado exitosamente',
-      data: newItem
+        message: 'Item creado exitosamente',
+        data: newItem
       })
     } catch (error) {
       const statusCode = error.message === 'Payload too large' ? 413 : 400
@@ -78,13 +77,13 @@ const createDataController = ({ dataService, responseBuilder, logger, config }) 
     }
   }
 
-/**
- * Maneja la solicitud PUT a /api/data/:id.
- * Actualiza un elemento existente basado en su ID y los datos proporcionados.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @param {number} id - ID del elemento a actualizar.
- */
+  /**
+   * Maneja la solicitud PUT a /api/data/:id.
+   * Actualiza un elemento existente basado en su ID y los datos proporcionados.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   * @param {number} id - ID del elemento a actualizar.
+   */
   const updateData = async (req, res, id) => {
     try {
       const idErrors = validateId(id)
@@ -110,8 +109,8 @@ const createDataController = ({ dataService, responseBuilder, logger, config }) 
 
       logger.info('Item updated', { id })
       responseBuilder.success(res, 200, {
-      message: 'Item actualizado exitosamente',
-      data: updatedItem
+        message: 'Item actualizado exitosamente',
+        data: updatedItem
       })
     } catch (error) {
       const statusCode = error.message === 'Payload too large' ? 413 : 400
@@ -119,13 +118,13 @@ const createDataController = ({ dataService, responseBuilder, logger, config }) 
     }
   }
 
-/**
- * Maneja la solicitud DELETE a /api/data/:id.
- * Elimina un elemento existente basado en su ID.
- * @param {Object} req - Objeto de solicitud HTTP.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @param {number} id - ID del elemento a eliminar.
- */
+  /**
+   * Maneja la solicitud DELETE a /api/data/:id.
+   * Elimina un elemento existente basado en su ID.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   * @param {number} id - ID del elemento a eliminar.
+   */
   const deleteData = (req, res, id) => {
     const idErrors = validateId(id)
     if (idErrors.length > 0) {
@@ -142,8 +141,8 @@ const createDataController = ({ dataService, responseBuilder, logger, config }) 
 
     logger.info('Item deleted', { id })
     responseBuilder.success(res, 200, {
-    message: 'Item eliminado exitosamente',
-    data: deletedItem
+      message: 'Item eliminado exitosamente',
+      data: deletedItem
     })
   }
 
