@@ -34,6 +34,7 @@ const createContainer = () => {
   return {
     config,
     logger,
+    responseBuilder,
     router,
     rateLimiter
   }
