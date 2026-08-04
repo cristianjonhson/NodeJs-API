@@ -149,7 +149,7 @@ zsh (PID: 1000)
    ```
 
 4. **Cross-platform compatibility**
-   - npm normaliza diferencias entre Unix/Windows
+   - pnpm normaliza diferencias entre Unix/Windows
    - Comandos funcionan igual en Linux/macOS/Windows
    - No necesitas scripts .sh y .bat separados
 
