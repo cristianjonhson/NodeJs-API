@@ -186,10 +186,10 @@ Copia y pega este bloque directamente en tu `settings.json`:
 ### 3. **Corrección Manual**
 ```bash
 # Ver todos los errores
-npm run lint
+pnpm lint
 
 # Corregir automáticamente todo lo posible
-npm run lint:fix
+pnpm lint:fix
 ```
 
 ---
